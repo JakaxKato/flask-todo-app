@@ -24,7 +24,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          pytest tests/
+          pytest test/
 
       - name: Bandit SAST Scan
         run: |
