@@ -1,11 +1,7 @@
-from flask import Flask
-from dotenv import load_dotenv
-import os
+from app import create_app
 
-load_dotenv()  # load dari file .env
-
-app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
-
-if __name__ == "__main__":
-    app.run(debug=True)
+def test_homepage():
+    app = create_app()
+    client = app.test_client()
+    response = client.get('/')
+    assert response.status_code == 200
