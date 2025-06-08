@@ -38,16 +38,16 @@ def runner(app):
 def test_homepage_redirect(client):
     # Cek homepage redirect (misal ke /login)
     response = client.get('/')
-    assert response.status_code == 302
-    assert "/login" in response.headers["Location"]
+    assert response.status_code == 302  # nosec B101
+    assert "/login" in response.headers["Location"]  # nosec B101
 
 def test_user_created(app):
     # Cek user testuser ada di database
     with app.app_context():
         user = User.query.filter_by(username="testuser").first()
-        assert user is not None
+        assert user is not None  # nosec B101
         # Cek password benar dengan metode verify_password (asumsi ada)
-        assert user.check_password("password123")
+        assert user.check_password("password123")  # nosec B101
 
 def test_login(client):
     # Tes login dengan user testuser (asumsi route /login POST)
@@ -56,5 +56,5 @@ def test_login(client):
         "password": "password123"
     }, follow_redirects=True)
 
-    assert response.status_code == 200
-    assert b"Logout" in response.data  # Contoh cek ada tombol Logout di halaman setelah login
+    assert response.status_code == 200  # nosec B101
+    assert b"Logout" in response.data  # Contoh cek ada tombol Logout di halaman setelah login  # nosec B101
