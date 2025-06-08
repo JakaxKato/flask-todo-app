@@ -7,7 +7,7 @@ auth = Blueprint('auth', __name__)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
