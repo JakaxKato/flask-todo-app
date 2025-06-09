@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from .models import User
 from . import db, login_manager
 from flask_login import login_user, logout_user, login_required
@@ -15,8 +15,10 @@ def login():
         user = User.query.filter_by(username=request.form['username']).first()
         if user and user.check_password(request.form['password']):
             login_user(user)
+            current_app.logger.info(f"User '{user.username}' logged in.")
             return redirect(url_for('main.index'))
         flash('Invalid credentials')
+        current_app.logger.warning(f"Failed login attempt for username: {request.form['username']}")
     return render_template('login.html')
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -25,7 +27,6 @@ def register():
         username = request.form['username'].strip()
         password = request.form['password'].strip()
 
-        # Validasi input sederhana
         if not username or not password:
             flash("Username dan password tidak boleh kosong.")
             return redirect(url_for('auth.register'))
@@ -34,7 +35,6 @@ def register():
             flash("Password minimal 6 karakter.")
             return redirect(url_for('auth.register'))
 
-        # Cek duplikasi username
         if User.query.filter_by(username=username).first():
             flash("Username sudah digunakan.")
             return redirect(url_for('auth.register'))
@@ -44,6 +44,7 @@ def register():
 
         db.session.add(new_user)
         db.session.commit()
+        current_app.logger.info(f"User '{username}' registered.")
         return redirect(url_for('auth.login'))
 
     return render_template('register.html')
@@ -51,5 +52,6 @@ def register():
 @auth.route('/logout')
 @login_required
 def logout():
+    current_app.logger.info("User logged out.")
     logout_user()
     return redirect(url_for('auth.login'))

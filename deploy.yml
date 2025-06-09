@@ -1,14 +1,14 @@
 ---
 - name: Deploy Flask Todo App with Docker
   hosts: staging
-  become: true
+  become: yes
+
   tasks:
     - name: Build Docker image
       community.docker.docker_image:
         name: flask_todo_app
         build:
-          path: .
-        source: build
+          path: "{{ playbook_dir }}/.."
 
     - name: Stop and remove existing container (if any)
       community.docker.docker_container:
@@ -20,6 +20,9 @@
       community.docker.docker_container:
         name: flaskapp
         image: flask_todo_app
-        ports:
-          - "8000:5000"
         state: started
+        restart_policy: always
+        published_ports:
+          - "5000:5000"
+        volumes:
+          - "{{ playbook_dir }}/../logs:/app/logs"
