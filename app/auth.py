@@ -22,11 +22,30 @@ def login():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        new_user = User(username=request.form['username'])
-        new_user.set_password(request.form['password'])
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+
+        # Validasi input sederhana
+        if not username or not password:
+            flash("Username dan password tidak boleh kosong.")
+            return redirect(url_for('auth.register'))
+
+        if len(password) < 6:
+            flash("Password minimal 6 karakter.")
+            return redirect(url_for('auth.register'))
+
+        # Cek duplikasi username
+        if User.query.filter_by(username=username).first():
+            flash("Username sudah digunakan.")
+            return redirect(url_for('auth.register'))
+
+        new_user = User(username=username)
+        new_user.set_password(password)
+
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('auth.login'))
+
     return render_template('register.html')
 
 @auth.route('/logout')

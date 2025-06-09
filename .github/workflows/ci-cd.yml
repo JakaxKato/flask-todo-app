@@ -31,6 +31,7 @@ jobs:
         run: |
           pip install bandit
           bandit -r .
+          bandit -r . --severity-level high -f json -o bandit-report.json
 
       - name: Build Docker Image
         run: |
