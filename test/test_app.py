@@ -4,57 +4,55 @@ from app.models import User
 
 @pytest.fixture
 def app():
-    # Buat instance Flask app untuk testing
+  
     app = create_app()
     app.config.update({
         "TESTING": True,
-        "WTF_CSRF_ENABLED": False,  # Nonaktifkan CSRF untuk testing form
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",  # DB sementara di RAM
+        "WTF_CSRF_ENABLED": False,  
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",  
         "SECRET_KEY": "testsecret"
     })
 
     with app.app_context():
-        db.create_all()  # buat tabel
-        # Tambah user test dengan set_password
+        db.create_all()  
         user = User(username="testuser")
         user.set_password("password123")
         db.session.add(user)
         db.session.commit()
 
-    yield app  # beri app ke test yang membutuhkan
+    yield app 
 
-    # Cleanup setelah test selesai
     with app.app_context():
         db.drop_all()
 
 @pytest.fixture
 def client(app):
-    return app.test_client()  # client untuk request ke app
+    return app.test_client()  
 
 @pytest.fixture
 def runner(app):
-    return app.test_cli_runner()  # untuk testing CLI command jika ada
+    return app.test_cli_runner()  
 
 def test_homepage_redirect(client):
-    # Cek homepage redirect (misal ke /login)
+    
     response = client.get('/')
     assert response.status_code == 302  # nosec B101
     assert "/login" in response.headers["Location"]  # nosec B101
 
 def test_user_created(app):
-    # Cek user testuser ada di database
+    
     with app.app_context():
         user = User.query.filter_by(username="testuser").first()
         assert user is not None  # nosec B101
-        # Cek password benar dengan metode verify_password (asumsi ada)
+
         assert user.check_password("password123")  # nosec B101
 
 def test_login(client):
-    # Tes login dengan user testuser (asumsi route /login POST)
+    
     response = client.post('/login', data={
         "username": "testuser",
         "password": "password123"
     }, follow_redirects=True)
 
     assert response.status_code == 200  # nosec B101
-    assert b"Logout" in response.data  # Contoh cek ada tombol Logout di halaman setelah login  # nosec B101
+    assert b"Logout" in response.data   # nosec B101
