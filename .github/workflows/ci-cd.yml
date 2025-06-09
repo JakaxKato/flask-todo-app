@@ -46,11 +46,12 @@ jobs:
         with: 
           target: "http://localhost:5000"
           fail_action: false
-          cmd_options: >-
+          cmd_options: >
+            -I
             -J report_json.json
             -w report_md.md
             -r report_html.html
-            -I
+            
           
             
       - name: Upload ZAP Report
