@@ -1,0 +1,4 @@
+2025-06-13 11:29:07,402 INFO: Flask Todo App startup [in C:\Users\wijay\flask_todo\app\__init__.py:42]
+2025-06-13 11:29:22,552 WARNING: Failed login attempt for username: Jack29 [in C:\Users\wijay\flask_todo\app\auth.py:21]
+2025-06-13 11:38:58,434 INFO: Flask Todo App startup [in C:\Users\wijay\flask_todo\app\__init__.py:42]
+2025-06-13 11:39:10,354 WARNING: Failed login attempt for username: Jack29 [in C:\Users\wijay\flask_todo\app\auth.py:21]
