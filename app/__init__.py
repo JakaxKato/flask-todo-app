@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 import logging
 from logging.handlers import RotatingFileHandler
+from prometheus_flask_exporter import PrometheusMetrics
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -15,6 +16,9 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "default-secret")
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
+
+    # 🔥 Inisialisasi Prometheus metrics DI SINI (sebelum blueprint/register route)
+    metrics = PrometheusMetrics(app)
 
     db.init_app(app)
     login_manager.init_app(app)
